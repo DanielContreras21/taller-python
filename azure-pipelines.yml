@@ -18,6 +18,21 @@ stages:
         python3 -m venv venv
         venv/bin/pip install --upgrade pip
         venv/bin/pip install -r requirements.txt
+        venv/bin/pip install pytest-cov  # Asegura cobertura
 
-        venv/bin/pytest --cov=.
+        # Correr tests y generar reporte cobertura en XML
+        venv/bin/pytest --cov=. --cov-report xml:coverage.xml
       displayName: 'Install dependencies and run tests'
+
+- stage: PublishMetrics
+  displayName: 'Publish Code Coverage'
+  dependsOn: BuildAndTestPython
+  jobs:
+  - job: Metrics
+    displayName: 'Publish Coverage Metrics'
+    steps:
+    - task: PublishCodeCoverageResults@1
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'coverage.xml'
+      displayName: 'Publish Python Code Coverage'
