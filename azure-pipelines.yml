@@ -11,16 +11,13 @@ stages:
   - job: Python
     displayName: 'Run Python Tests'
     steps:
-    - task: UsePythonVersion@1
-      inputs:
-        versionSpec: '3.x'
-        addToPath: true
-      displayName: 'Set up Python 3.x'
+    - bash: |
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-venv python3-pip
 
-    - script: |
-        python -m venv venv
+        python3 -m venv venv
         venv/bin/pip install --upgrade pip
         venv/bin/pip install -r requirements.txt
+
         venv/bin/pytest --cov=.
       displayName: 'Install dependencies and run tests'
-      shell: bash
