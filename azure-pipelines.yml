@@ -1,0 +1,26 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: BuildAndTestPython
+  displayName: 'Build and Test Python Project'
+  jobs:
+  - job: Python
+    displayName: 'Run Python Tests'
+    steps:
+    - task: UsePythonVersion@1
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+      displayName: 'Set up Python 3.x'
+
+    - script: |
+        python -m venv venv
+        venv/bin/pip install --upgrade pip
+        venv/bin/pip install -r requirements.txt
+        venv/bin/pytest --cov=.
+      displayName: 'Install dependencies and run tests'
+      shell: bash
